@@ -1,0 +1,72 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-20.04"
+  
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "private_network", ip: "192.168.33.10"
+
+  config.vm.synced_folder "./data", "/instance_data"
+  config.vm.synced_folder "../data", "/global_data"
+  
+  config.vm.provider "virtualbox" do |vb|
+     vb.gui = true
+     vb.memory = "4096"
+  end
+  
+
+  config.vm.provision "shell", inline: <<-SHELL
+     apt update
+     apt install -y nginx
+     systemctl stop nginx.service
+     systemctl start nginx.service
+     systemctl enable nginx.service
+   
+     
+     apt-get install -y zip 
+     apt-get install -y software-properties-common
+
+     add-apt-repository -y ppa:ondrej/php
+     apt update
+
+     apt install -y php7.4-fpm 
+     apt install -y php7.4-common 
+     apt install -y php7.4-mysql 
+     apt install -y php7.4-gmp 
+     apt install -y php7.4-curl 
+     apt install -y php7.4-intl 
+     apt install -y php7.4-mbstring 
+     apt install -y php7.4-xmlrpc 
+     apt install -y php7.4-gd 
+     apt install -y php7.4-xml 
+     apt install -y php7.4-cli 
+     apt install -y php7.4-zip
+     apt install -y php7.4-bcmath
+     apt install -y php7.4-soap
+
+     apt-get install -y openjdk-8-jdk
+     apt install -y apt-transport-https
+
+     cp /instance_data/php.ini /etc/php/7.4/fpm/php.ini
+     cp -r /instance_data/php_fastcgi.conf /etc/nginx/php_fastcgi.conf
+     ln -snf /instance_data/phpinfo.php /var/www/html/phpinfo.php
+
+     apt install -y curl git
+     sudo cp /global_data/composer.phar /usr/local/bin/composer
+     chmod +x /usr/local/bin/composer
+
+     wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+     echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
+     apt update
+     apt install -y elasticsearch
+     
+     systemctl daemon-reload
+     systemctl enable elasticsearch.service
+     systemctl start elasticsearch.service
+
+     systemctl status php7.4-fpm
+
+     apt update
+     apt-get install -y letsencrypt
+
+   SHELL
+
+end

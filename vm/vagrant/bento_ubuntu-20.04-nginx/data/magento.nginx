@@ -1,0 +1,19 @@
+upstream fastcgi_backend {
+  server unix:/var/run/php/php7.4-fpm.sock;
+}
+
+server {
+    listen 80;
+    
+
+
+    server_name  www.magento-dev.com;
+
+    set $MAGE_ROOT /var/www/html/magento;
+    set $MAGE_MODE developer;
+
+    access_log /var/log/nginx/magento-dev.com-access.log;
+    error_log /var/log/nginx/magento-dev.com-error.log;
+
+    include /var/www/html/magento/nginx.conf.sample;
+}
