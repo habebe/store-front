@@ -18,14 +18,25 @@ sudo /var/www/html/magento/bin/magento setup:install \
 --admin-firstname=admin --admin-lastname=admin --admin-email=hay.knock@gmail.com --admin-user=admin --admin-password=admin123 \
 --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1
 
-sudo chown -R www-data:www-data /var/www/html/magento/
-sudo chmod -R 755 /var/www/html/magento/
-sudo chown -R :www-data .
-sudo chmod u+x bin/magento
-
 sudo ./bin/magento deploy:mode:set developer
 sudo ./bin/magento sampledata:deploy
+sudo ./bin/magento setup:upgrade
+sudo ./bin/magento setup:di:compile
+
 
 sudo cp /instance_data/magento.nginx  /etc/nginx/sites-available/magento
 sudo ln -snf /etc/nginx/sites-available/magento /etc/nginx/sites-enabled/
-sudo systemctl restart nginx.service
+
+sudo cp /instance_data/default.nginx  /etc/nginx/sites-available/default
+sudo ln -snf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+
+sudo chown -R www-data:www-data /var/www/html/
+sudo chmod -R 755 /var/www/html/
+sudo chown -R :www-data /var/www/
+sudo chmod u+x /var/www/html/magento/bin/magento
+
+sudo systemctl restart php7.4-fpm
+sudo systemctl enable php7.4-fpm
+
+sudo systemctl restart nginx
+sudo systemctl enable nginx
