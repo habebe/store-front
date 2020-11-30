@@ -12,7 +12,7 @@ sudo find var generated vendor pub/static pub/media app/etc -type f -exec chmod 
 sudo find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
 
 sudo /var/www/html/magento/bin/magento setup:install \
---base-url=http://192.168.33.10 \
+--base-url=http://192.168.33.10/magento \
 --db-host=localhost --db-name=magento --db-user=magento --db-password=magento \
 --backend-frontname=admin \
 --admin-firstname=admin --admin-lastname=admin --admin-email=hay.knock@gmail.com --admin-user=admin --admin-password=admin123 \
