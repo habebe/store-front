@@ -1,0 +1,12 @@
+first time:
+vagrant up --provision
+vagrant ssh
+sudo /instance_data/install_magento
+
+On vm instance
+add the following to /etc/hosts
+127.0.0.1       runners-world
+
+On windows 
+Add the following to C:\Windows\System32\drivers\etc\hosts
+192.168.33.10 runners-world
